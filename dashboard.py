@@ -1,7 +1,7 @@
 """
 Dashboard IoT en Python avec Streamlit
 Affiche en temps réel les données envoyées par le capteur virtuel.
-Broker : test.mosquitto.org
+Broker : HiveMQ Cloud
 Topic : sensors/temperature/data (télémétrie)
 """
 import json
@@ -13,9 +13,11 @@ import streamlit as st
 import paho.mqtt.client as mqtt
 import pandas as pd
 
-# ==== CONFIG MQTT (doit être identique au capteur) ====
-MQTT_BROKER = "test.mosquitto.org"
-MQTT_PORT = 1883
+# ==== CONFIG MQTT HiveMQ Cloud ====
+MQTT_BROKER = "7be661ae342e41e28bb30488c56a0cfe.s1.eu.hivemq.cloud"
+MQTT_PORT = 8883
+MQTT_USERNAME = "sensor_user"
+MQTT_PASSWORD = "bY.5Gdir4iSrwWy"
 TOPIC_TELEMETRY = "sensors/temperature/data"
 
 # Taille de l'historique pour les graphes
@@ -67,6 +69,11 @@ if "mqtt_client" not in st.session_state:
         client_id="streamlit_dashboard",
         userdata=st.session_state.global_queue  # Passer la queue ici
     )
+    
+    # Configuration pour HiveMQ Cloud (authentification + TLS)
+    client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+    client.tls_set()  # Active TLS/SSL
+    
     client.on_connect = on_connect
     client.on_message = on_message
     
@@ -102,7 +109,7 @@ while not st.session_state.global_queue.empty():
 # ==== UI STREAMLIT ====
 st.set_page_config(page_title="IoT Dashboard", layout="wide", page_icon="📊")
 
-st.title("📊 Dashboard IoT – Capteur virtuel (MQTT)")
+st.title("📊 Dashboard IoT ")
 
 # Barre d'info avec statut de connexion
 status_color = "🟢" if st.session_state.connection_status == "Connecté" else "🔴"

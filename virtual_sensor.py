@@ -16,8 +16,11 @@ from datetime import datetime
 import paho.mqtt.client as mqtt # type: ignore
 
 # Configuration MQTT LOCAL (broker Mosquitto local)
-MQTT_BROKER = "test.mosquitto.org"
-MQTT_PORT = 1883
+# NOUVEAU (HiveMQ Cloud)
+MQTT_BROKER = "7be661ae342e41e28bb30488c56a0cfe.s1.eu.hivemq.cloud"  # Votre URL de cluster
+MQTT_PORT = 8883
+MQTT_USERNAME = "sensor_user"      # Votre username
+MQTT_PASSWORD = "bY.5Gdir4iSrwWy"  # Votre password
 CLIENT_ID = "virtual_sensor_001"
 TOPIC_TELEMETRY = "sensors/temperature/data"
 TOPIC_COMMAND = "sensors/temperature/command"
@@ -85,11 +88,16 @@ class VirtualSensor:
             print(f"❌ Erreur traitement commande: {e}")
         
     def connect(self):
-        """Établit la connexion MQTT avec le broker local"""
+        """Établit la connexion MQTT avec HiveMQ Cloud"""
         print(f"[{datetime.now()}] Initialisation du client MQTT...")
         
         # Initialiser le client MQTT
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, client_id=CLIENT_ID)
+        
+        # Configuration pour HiveMQ Cloud (authentification + TLS)
+        self.client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+        self.client.tls_set()  # Active TLS/SSL (obligatoire pour HiveMQ Cloud)
+        
         self.client.on_connect = self.on_connect
         self.client.on_disconnect = self.on_disconnect
         self.client.on_message = self.command_callback

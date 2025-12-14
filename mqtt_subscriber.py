@@ -7,9 +7,11 @@ import json
 from datetime import datetime
 import paho.mqtt.client as mqtt  # type: ignore
 
-# Configuration (doit correspondre au capteur)
-MQTT_BROKER = "test.mosquitto.org"
-MQTT_PORT = 1883
+# Configuration HiveMQ Cloud (doit correspondre au capteur)
+MQTT_BROKER = "7be661ae342e41e28bb30488c56a0cfe.s1.eu.hivemq.cloud"
+MQTT_PORT = 8883
+MQTT_USERNAME = "sensor_user"
+MQTT_PASSWORD = "bY.5Gdir4iSrwWy"
 TOPIC_TELEMETRY = "sensors/temperature/data"
 TOPIC_COMMAND = "sensors/temperature/command"
 
@@ -19,6 +21,11 @@ class IoTSubscriber:
     
     def __init__(self):
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, client_id="iot_cloud_simulator")
+        
+        # Configuration pour HiveMQ Cloud (authentification + TLS)
+        self.client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+        self.client.tls_set()  # Active TLS/SSL
+        
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.message_count = 0
