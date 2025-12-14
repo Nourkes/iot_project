@@ -1,6 +1,6 @@
-Simulation IoT Complète (Sans Compte Cloud)
+Simulation IoT Complète 
 
-Ce projet permet de simuler une architecture IoT complète (Capteur → Broker → Dashboard) en local, sans avoir besoin de compte cloud (AWS, Azure, etc.) ni de carte bancaire.
+Ce projet permet de simuler une architecture IoT complète (Capteur → Broker → Dashboard) 
 
 📌 Architecture
 
